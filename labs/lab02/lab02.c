@@ -43,9 +43,6 @@ int main()
 
     printf("Error to actual Pi for double: %.17g\n", double_error);
 
-    // Print a console message to inform user what's going on.
-    printf("Hey x\n");
-
     // Returning zero indicates everything went okay.
     return 0;
 }
