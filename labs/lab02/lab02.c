@@ -29,13 +29,14 @@ int main()
 
     float float_actual_pi = 3.14159265359;
 
-    float float_pi = calc_pi_float(10000);
+    float float_pi = calc_pi_float(100000);
 
     float float_error = float_actual_pi - float_pi;
 
+    // Print results to console.
     printf("Error to actual Pi for float: %.9g\n", float_error);
 
-    double double_pi = calc_pi_double(10000);
+    double double_pi = calc_pi_double(100000);
 
     double double_actual_pi = 3.14159265359;
 
@@ -49,16 +50,18 @@ int main()
 
 float calc_pi_float(int precision)
 {
+    // Start at 1.
     float pi = 1.0;
 
+    // Loops until precision.
     for (int i = 1; i < precision; i++)
     {
         float tmp = 4.0 * i * i;
         pi *= tmp / (tmp - 1);
     }
-
     pi *= 2;
 
+    // Prints result to console.
     printf("Float Pi for precision %d: %.9g\n", precision, pi);
 
     return pi;
@@ -66,8 +69,10 @@ float calc_pi_float(int precision)
 
 double calc_pi_double(int precision)
 {
+    // Start at 1.
     double pi = 1.0;
 
+    // Loops until precision.
     for (int i = 1; i < precision; i++)
     {
         double tmp = 4.0 * i * i;
@@ -76,6 +81,7 @@ double calc_pi_double(int precision)
 
     pi *= 2;
 
+    // Prints result to console.
     printf("Double Pi for precision %d: %.9g\n", precision, pi);
 
     return pi;
