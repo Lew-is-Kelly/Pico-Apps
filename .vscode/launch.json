@@ -11,7 +11,7 @@
             "gdbPath": "arm-none-eabi-gdb",
             "device": "RP2040",
             "configFiles": ["interface/picoprobe.cfg", "target/rp2040.cfg"],
-            "searchDir": ["C:\\msys64\\home\\lewis\\openocd\\tcl"],
+            "searchDir": ["C:\\Users\\lewis\\Documents\\Code\\Microprocessor Systems\\pico-apps\\tools\\openocd\\tcl"],
             "svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd",
             "runToMain": true,
             "postRestartCommands": ["break main", "continue"]
