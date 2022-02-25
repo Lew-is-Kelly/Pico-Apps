@@ -1,0 +1,3 @@
+[submodule "tools/picoprobe/tools/picoprobe"]
+	path = tools/picoprobe/tools/picoprobe
+	url = https://github.com/raspberrypi/picoprobe.git
