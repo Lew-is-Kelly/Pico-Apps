@@ -70,20 +70,32 @@ int main()
 
     const int ITER_MAX = 100000;
 
+    float float_res;
+    double double_res;
+
     stdio_init_all();
     multicore_launch_core1(core1_entry);
 
-    // Code for sequential run goes here…
-    int32_t time_start = time_us_32(); //    Take snapshot of timer and store
+    printf("Running Sequential Tests:\n"); // Code for sequential run goes here…
+    int32_t time_start = time_us_32();     //    Take snapshot of timer and store
 
     multicore_fifo_push_blocking((uintptr_t)&calc_pi_float); //    Run the single-precision Wallis approximation
     multicore_fifo_push_blocking(ITER_MAX);
 
+    float_res = multicore_fifo_pop_blocking();
+
     multicore_fifo_push_blocking((uintptr_t)&calc_pi_double); //     Run the double-precision Wallis approximation
     multicore_fifo_push_blocking(ITER_MAX);
 
-    time_start = time_us_32() - time_start;             //    Take snapshot of timer and store
-    printf("Time for sequential mode: %d", time_start); //    Display time taken for application to run in sequential mode
+    double_res = multicore_fifo_pop_blocking();
+
+    int32_t time_end = time_us_32();
+
+    printf("Float Pi is: %.9g\n", float_res);
+    printf("Double Pi is: %.9g\n", double_res);
+
+    int32_t time = time_end - time_start;       //    Take snapshot of timer and store
+    printf("Total Time Taken: %dms\n\n", time); //    Display time taken for application to run in sequential mode
 
     // Code for parallel run goes here…
     //    Take snapshot of timer and store
