@@ -97,12 +97,14 @@ int main()
     int32_t time = time_end - time_start;       //    Take snapshot of timer and store
     printf("Total Time Taken: %dms\n\n", time); //    Display time taken for application to run in sequential mode
 
-    // Code for parallel run goes here…
-    //    Take snapshot of timer and store
+    printf("Running Parallel Tests:\n"); // Code for parallel run goes here…
+    time_start = time_us_32();           //    Take snapshot of timer and store
     //    Run the single-precision Wallis approximation on one core
     //    Run the double-precision Wallis approximation on the other core
-    //    Take snapshot of timer and store
-    //    Display time taken for application to run in parallel mode
+    time_end = time_us_32(); //    Take snapshot of timer and store
+
+    time = time_end - time_start;
+    printf("Total Time Taken: %dms\n\n", time); //    Display time taken for application to run in parallel mode
 
     return 0;
 }
