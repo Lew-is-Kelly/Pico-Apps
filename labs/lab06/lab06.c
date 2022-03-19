@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <inttypes.h>
 #include "pico/stdlib.h"
 #include "pico/float.h"     // Required for using single-precision variables.
 #include "pico/double.h"    // Required for using double-precision variables.
 #include "pico/multicore.h" // Required for using multiple cores on the RP2040.
+
+#define __STDC_FORMAT_MACROS
 
 /**
  * @brief This function acts as the main entry-point for core #1.
@@ -25,7 +28,7 @@ void core1_entry()
     }
 }
 
-int32_t calc_pi_float(int32_t precision)
+float calc_pi_float(int precision)
 {
     // Start at 1.
     float pi = 1.0;
@@ -44,7 +47,7 @@ int32_t calc_pi_float(int32_t precision)
     return pi;
 }
 
-int32_t calc_pi_double(int32_t precision)
+double calc_pi_double(int precision)
 {
     // Start at 1.
     double pi = 1.0;
@@ -70,41 +73,44 @@ int main()
 
     const int ITER_MAX = 100000;
 
-    float float_res;
-    double double_res;
-
     stdio_init_all();
+
+    printf("----------------------------------------------------\n");
+
+    printf("Running functions on core0 sequentially:\n"); //    Code for sequential run goes here…
+    uint64_t time_start = time_us_64();                   //    Take snapshot of timer and store
+
+    calc_pi_float(ITER_MAX); //    Run the single-precision Wallis approximation
+
+    uint64_t time_mid = time_us_64();
+
+    calc_pi_double(ITER_MAX); //    Run the double-precision Wallis approximation
+
+    uint64_t time_end = time_us_64(); //    Take snapshot of timer and store
+
+    printf("Time taken for single precision on core0: %" PRIu64 "us\n", (time_mid - time_start));
+    printf("Time taken for double presicion on core0: %" PRIu64 "us\n", (time_end - time_mid));
+    printf("Time taken for both sequentially on core0: %" PRIu64 "us\n", (time_end - time_start)); //    Display time taken for application to run in sequential mode
+
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+
+    printf("Running In Parallel on Two Cores:\n"); //    Code for parallel run goes here…
+
     multicore_launch_core1(core1_entry);
 
-    printf("Running Sequential Tests:\n"); // Code for sequential run goes here…
-    int32_t time_start = time_us_32();     //    Take snapshot of timer and store
+    time_start = time_us_64(); //    Take snapshot of timer and store
 
-    multicore_fifo_push_blocking((uintptr_t)&calc_pi_float); //    Run the single-precision Wallis approximation
+    multicore_fifo_push_blocking((uintptr_t)&calc_pi_double); //    Run the single-precision Wallis approximation on one core
     multicore_fifo_push_blocking(ITER_MAX);
 
-    float_res = multicore_fifo_pop_blocking();
+    calc_pi_float(ITER_MAX); //    Run the double-precision Wallis approximation on the other core
 
-    multicore_fifo_push_blocking((uintptr_t)&calc_pi_double); //     Run the double-precision Wallis approximation
-    multicore_fifo_push_blocking(ITER_MAX);
+    multicore_fifo_pop_blocking();
 
-    double_res = multicore_fifo_pop_blocking();
+    time_end = time_us_64(); //    Take snapshot of timer and store
 
-    int32_t time_end = time_us_32();
+    printf("Time taken for both cores in parallel: %" PRIu64 "us\n", (time_end - time_start)); //    Display time taken for application to run in parallel mode
 
-    printf("Float Pi is: %.9g\n", float_res);
-    printf("Double Pi is: %.9g\n", double_res);
-
-    int32_t time = time_end - time_start;       //    Take snapshot of timer and store
-    printf("Total Time Taken: %dms\n\n", time); //    Display time taken for application to run in sequential mode
-
-    printf("Running Parallel Tests:\n"); // Code for parallel run goes here…
-    time_start = time_us_32();           //    Take snapshot of timer and store
-    //    Run the single-precision Wallis approximation on one core
-    //    Run the double-precision Wallis approximation on the other core
-    time_end = time_us_32(); //    Take snapshot of timer and store
-
-    time = time_end - time_start;
-    printf("Total Time Taken: %dms\n\n", time); //    Display time taken for application to run in parallel mode
-
+    printf("----------------------------------------------------\n");
     return 0;
 }
